@@ -3,21 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surya Lis</title>
+    <title>Infinity & Beyond | Lismathi</title>
+    
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <!-- GSAP & Confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --gold: #d4af37;
+            --skyblue: #87CEEB; /* Added this so your button works! */
+            --glass: rgba(255, 255, 255, 0.08);
+            --text: #f0f0f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #050505;
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+        /* --- PRELOADER --- */
+        #loader {
+            height: 100vh; width: 100%; position: fixed; background: #000;
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; transition: 1s;
+        }
+
+        .loader-text {
+            font-family: 'Cinzel', serif; font-size: 2rem;
+            letter-spacing: 10px; color: var(--gold); animation: pulse 2s infinite;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), #050505), 
+                        url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1920');
+            background-size: cover; background-position: center; background-attachment: fixed; text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Alex Brush', cursive; font-size: 8rem;
+            color: var(--gold); margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* --- TIMER --- */
+        .timer-container { padding: 50px 0; background: #080808; border-top: 1px solid var(--glass); }
+        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 800px; margin: 0 auto; gap: 20px; }
+        .timer-box { background: var(--glass); padding: 20px; border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3); text-align: center; }
+        .timer-box span { font-size: 2.5rem; color: var(--gold); font-weight: 600; display: block; }
+
+        /* --- NICKNAMES --- */
+        .nicknames-section { padding: 100px 10%; text-align: center; }
+        .name-card {
+            display: inline-block; margin: 15px; padding: 20px 40px;
+            background: var(--glass); border-radius: 50px; border: 1px solid var(--gold);
+            font-family: 'Alex Brush', cursive; font-size: 2.5rem; transition: 0.4s; cursor: pointer;
+        }
+        .name-card:hover { background: var(--gold); color: black; transform: scale(1.1); }
+
+        /* --- GALLERY --- */
+        .gallery-wrap { padding: 100px 5%; columns: 3; column-gap: 20px; }
+        .gallery-wrap img { width: 100%; margin-bottom: 20px; border-radius: 10px; transition: 0.5s; }
+
+        /* --- BIRTHDAY SECTION --- */
+        .birthday-section {
+            height: 90vh; display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #200101 0%, #050505 100%);
+        }
+
+        .bday-card {
+            text-align: center; padding: 60px; border: 2px solid var(--gold);
+            border-radius: 30px; position: relative; max-width: 800px;
+        }
+
+        .bday-card h2 { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--gold); margin-bottom: 20px;}
+
+        /* --- MUSIC ICON --- */
+        #music-heart {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: var(--gold); border-radius: 50%; display: flex;
+            justify-content: center; align-items: center; cursor: pointer;
+            z-index: 1000; animation: beat 1s infinite;
+        }
+
+        @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        @media (max-width: 768px) { .hero h1 { font-size: 4rem; } .gallery-wrap { columns: 1; } }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Surya Lis</h1>
 
-    <!-- Example image references updated to GitHub raw URLs -->
-    <img src="https://raw.githubusercontent.com/dhandapani73975/surya_lis/main/images/sample.jpg" alt="Sample Image">
-    <audio controls>
-        <source src="https://raw.githubusercontent.com/dhandapani73975/surya_lis/main/audio/sample.mp3" type="audio/mpeg">
-        Your browser does not support the audio tag.
+    <audio id="love-song" loop>
+        <source src="C:\Users\Hp\Downloads\Happy-Birthday.mp3" type="audio/mpeg">
     </audio>
-    <video controls>
-        <source src="https://raw.githubusercontent.com/dhandapani73975/surya_lis/main/video/sample.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
 
+    <div id="music-heart" onclick="toggleMusic()">❤️</div>
+
+    <div id="loader"><div class="loader-text">PREPARING YOUR UNIVERSE...</div></div>
+
+    <section class="hero">
+        <p>To My Everything</p>
+        <h1>Lismathi</h1>
+        <p>A Journey of Love & Promises</p>
+        <button onclick="scrollToContent()" style="margin-top: 30px; background: none; border: 1px solid var(--gold); color: white; padding: 10px 25px; cursor: pointer; border-radius: 20px;">Scroll Into My Heart</button>
+    </section>
+
+    <section class="timer-container" id="timer-trigger">
+        <h2 style="text-align:center; font-family:'Cinzel'; margin-bottom: 30px; color: var(--gold);">Time We've Spent Together</h2>
+        <div class="timer-grid">
+            <div class="timer-box"><span id="days">00</span><label>Days</label></div>
+            <div class="timer-box"><span id="hours">00</span><label>Hours</label></div>
+            <div class="timer-box"><span id="minutes">00</span><label>Minutes</label></div>
+            <div class="timer-box"><span id="seconds">00</span><label>Seconds</label></div>
+        </div>
+    </section>
+
+    <section class="nicknames-section">
+        <h2 style="font-family:'Cinzel'; color: var(--gold); margin-bottom: 40px;">My Many Names For You</h2>
+        <div class="name-card" onclick="alert('My little world!')">Papa</div>
+        <div class="name-card" onclick="alert('The most beautiful girl i have ever seen!')">Mayiluu</div>
+        <div class="name-card" onclick="alert('You are richer than gold raa!')">Thangoo</div>
+        <div class="name-card" onclick="alert('En azhaguu Kutty!')">Kutty</div>
+        <div class="name-card" onclick="alert('My home!')">Ma</div>
+    </section>
+
+    <section class="gallery-wrap">
+        <img src="./surya/1.jpeg" class="clickable-photo"; alt="Description of photo">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\f51bd0ba9066f5d2406306bd0eb342b1.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG_20221101_070413.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250111-WA0016.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250211-WA0028.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250211-WA0036.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250211-WA0045.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250212-WA0030.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250212-WA0024.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250212-WA0027.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250601-WA0051.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20250601-WA0020.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\Snapchat-226969192.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\Snapchat-421608975.jpg">
+        <img src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\SL\IMG-20251219-WA0026.jpg">
+        
+    </section>
+
+    <section style="padding:100px 10%; text-align:center;">
+    <h2 style="font-family:'Cinzel'; color: var(--gold);">How Well Do You Know Us? 💖</h2>
+
+    <div id="quiz-box" style="margin-top:30px;">
+        <p id="question">Where did we first meet?</p>
+        <br>
+        <button onclick="checkAnswer(0)">College</button>
+        <button onclick="checkAnswer(0)">Instagram</button>
+        <button onclick="checkAnswer(0)">Random Street</button>
+        <button onclick="checkAnswer(1)">whatsapp</button>
+    </div>
+
+    <p id="quiz-result" style="margin-top:20px; font-size:1.2rem;"></p>
+</section>
+
+    <!-- BIRTHDAY SECTION WITH YOUR BUTTON ADDED HERE -->
+    <section class="birthday-section" id="bday-trigger">
+        <div class="bday-card">
+            <p style="letter-spacing: 5px;">A SPECIAL DAY FOR A SPECIAL SOUL</p>
+            <h2>Happy Birthday, My Lismathi, My everything!</h2>
+            <p style="margin-top: 20px; font-style: italic;">"May the universe conspire to give you all the happiness you deserve and may all your dreams come true and i'll be there for you always."</p>
+            
+            <!-- YOUR BUTTON PLACED HERE -->
+            <button onclick="blast()" style="margin-top: 30px; background: var(--skyblue); border: none; padding: 15px 40px; border-radius: 30px; cursor: pointer; font-weight: bold; color: #000;">CLICK FOR SURPRISE 🎈</button>
+            
+            <div style="font-size: 3rem; margin-top: 20px;">🎂 🎁 🕊️</div>
+        </div>
+    </section>
+
+    <section style="padding:100px 10%; text-align:center;">
+    <h2 style="color:var(--gold);">Our Memories 🎥</h2>
+
+    <video controls width="300" style="margin-top:20px; border-radius:20px;">
+        <source src="C:\Users\Hp\Desktop\File Manager\Movies\Surya\InShot_20260323_212212798.mp4" type="video/mp4">
+    </video>
+</section>
+
+    <section style="padding:100px 10%; text-align:center;">
+    <button onclick="openLetter()" style="padding:15px 30px; border:none; border-radius:20px; background:var(--gold); cursor:pointer;">
+        Open Secret Letter 💌
+    </button>
+
+    <div id="letter" style="display:none; margin-top:30px; font-style:italic;">
+        So papa romba days ku apro unkita letter valiya pesura chance enaku again kedachiruku papa and chennai vantha apro it's my 1st letter la. First of all Happiest 22 da papa huggieeee🫂..!!! I think konja naalavey unkita romba sanda pottuta i know papa unna hurt panitanu unna purinjikama neraya sanda potuta romba sorry papa🥹🫂 Apro romba miss pana papa unnaya oru mari feel aachu epdi solrathunu theriyama iruntha🫂 So papa 22 ayitu 23 la bds mudichitu veliya vanthuruvinga apro veetla nala pesunga pg pananum na panuga illa work ponga doubt ey illama ungaluku enna thonutho atha panunga papa epavum unga kuda than irupa as a supporting person.Coz ena porutha varaikum love means "Love panra ponna avangaluku pudicha life lead pana vitu atha antha paiyan azhaga manifest pananum" this is what the true feel comes 🫂 Seekaromey rendu perukum oru nala job kedachu unga veetla seekaromey vanthu pesura yaaru enna sonalum "enaku ne than unaku na than" Kalayanatha panrom😂🫶🏻 So ethukum feel panathinga papa enna aanalum paathukalam thoo iruku da chennai oru phone adi raa thangoo nenu nanu un munnadi vanthu nipen sariýa 😂🫶🏻 Imp thing periya pillaya aagitu poringa enna advice pana vaikaathinga olunga sapdunga skip panathinga thanni nala kudina juice moor la athigama kudinga stay hydrated and healthy papa 🫂 Seekaromey nambakana days varum papa ethuvum yosikathinga nalatheyy nadakum 🫂 and once again happiest birthday pondattiii 🫂🌎🧿💋 Poitu varen batharama irunga 🫂
+        You are not just my love... you are my peace, my happiness, my home. ❤️
+    </div>
+</section>
+
+<section style="padding:100px 10%; text-align:center;">
+    <h2 style="color:var(--gold);">Catch My Love ❤️</h2>
+    <p>Score: <span id="score">0</span></p>
+    <div id="game-area" style="position:relative; height:300px;"></div>
+</section>
+
+<section style="padding:100px 10%; text-align:center;">
+    <h2 style="color: var(--gold); font-family:'Cinzel';">
+        Why I Love You 💖
+    </h2>
+
+    <button onclick="showReason()" 
+        style="margin-top:20px; padding:10px 25px; border:none; border-radius:20px; cursor:pointer;">
+        Tap to Know 💕
+    </button>
+
+    <p id="reason" style="margin-top:20px; font-size:1.2rem;"></p>
+</section>
+
+    <section style="padding: 100px 10%; text-align: center;">
+        <h2 style="font-family: 'Alex Brush'; font-size: 5rem; color: var(--gold);">My Final Promise</h2>
+        <p style="max-width: 800px; margin: 0 auto; line-height: 2; font-size: 1.2rem; font-weight: 200;">
+            I promise to love you when you are happy, and even more when you are sad. You are my forever ma.
+        </p>
+        <p style="margin-top: 50px; font-family: 'Cinzel'; letter-spacing: 10px;">LOVE YOU AS ALWAYS DII EN THANGAMEYY</p>
+    </section>
+
+    <script>
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 1000);
+            }, 2000);
+        };
+
+        const startDate = new Date("May 6, 2023 00:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = now - startDate;
+            document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000);
+        }, 1000);
+
+        function toggleMusic() {
+            const song = document.getElementById('love-song');
+            if (song.paused) song.play(); else song.pause();
+        }
+
+        function scrollToContent() {
+            document.getElementById('timer-trigger').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ADDED THE BLAST FUNCTION HERE
+        function blast() {
+            confetti({
+                particleCount: 250,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#87CEEB', '#ffffff', '#d4af37']
+            });
+        }
+        const reasons = [
+    "Because your smile heals me ❤️",
+    "Because you understand me like no one else 🥺",
+    "Because you are my peace 🌙",
+    "Because you are MY Everything papa 💍",
+    "Because you make every day brighter ☀️",
+    "Because you are the most beautiful grace in my life 🌸",
+    "Because you are my sunshine on a rainy day 🌦️",
+    "Because you are my forever 💖",
+];
+
+function showReason() {
+    const random = reasons[Math.floor(Math.random() * reasons.length)];
+    document.getElementById("reason").innerText = random;
+}
+
+        function checkAnswer(correct) {
+    const result = document.getElementById("quiz-result");
+    if (correct) {
+        result.innerText = "Awww correct 😭❤️ You remember everything!";
+        confetti();
+    } else {
+        result.innerText = "Hehe wrong 😜 but still I love you!";
+    }
+}
+        function openLetter() {
+            const letter = document.getElementById("letter");
+            letter.style.display = letter.style.display === "none" ? "block" : "none";
+        }
+        let score = 0;
+
+function spawnHeart() {
+    const heart = document.createElement("div");
+    heart.innerHTML = "❤️";
+    heart.style.position = "absolute";
+    heart.style.left = Math.random() * 90 + "%";
+    heart.style.top = Math.random() * 90 + "%";
+    heart.style.cursor = "pointer";
+    heart.style.fontSize = "2rem";
+
+    heart.onclick = () => {
+        score++;
+        document.getElementById("score").innerText = score;
+        heart.remove();
+    };
+
+    document.getElementById("game-area").appendChild(heart);
+
+    setTimeout(() => heart.remove(), 2000);
+}
+
+setInterval(spawnHeart, 1000);
+    </script>
 </body>
 </html>
